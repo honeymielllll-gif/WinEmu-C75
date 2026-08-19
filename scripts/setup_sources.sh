@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
-echo "Descargando y preparando fuentes de Box64 y Wine..."
-mkdir -p build_deps
-git clone --depth 1 https://github.com/ptitSeb/box64.git build_deps/box64
-echo "Preparación de fuentes completada."
+
+echo "Clonando repositorio base de emulación..."
+git clone --depth 1 https://github.com/brunodev85/winlator.git temp_winlator
+
+echo "Copiando estructura del proyecto Android al repositorio..."
+cp -r temp_winlator/* .
+cp -r temp_winlator/.* . 2>/dev/null || true
+rm -rf temp_winlator
+
+chmod +x gradlew
+echo "Fuentes de Winlator listas para compilar."
