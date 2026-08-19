@@ -1,0 +1,46 @@
+name: Build WinEmu-C75 APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y wget unzip git build-essential cmake ninja-build meson python3-pip
+          pip3 install mako
+
+      - name: Setup Android SDK & NDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
+          ndk-version: 27.1.12297006
+
+      - name: Clone sources and apply patches
+        run: bash scripts/setup_sources.sh
+
+      - name: Build native libs
+        run: bash scripts/build_native.sh
+
+      - name: Build APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: WinEmu-C75-debug
+          path: app/build/outputs/apk/debug/*.apk
