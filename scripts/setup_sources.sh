@@ -1,20 +1,16 @@
 #!/bin/bash
 set -e
 
-echo "Clonando repositorio base de Winlator..."
-git clone --depth 1 https://github.com/brunodev85/winlator.git temp_winlator
+echo "Clonando repositorio base de Winlator en directorio temporal..."
+rm -rf /tmp/winlator_src
+git clone --depth 1 https://github.com/brunodev85/winlator.git /tmp/winlator_src
 
-echo "Copiando todos los archivos del proyecto..."
-cp -a temp_winlator/. .
-rm -rf temp_winlator
+echo "Copiando fuentes al proyecto..."
+cp -r /tmp/winlator_src/* .
+cp -r /tmp/winlator_src/.* . 2>/dev/null || true
+rm -rf /tmp/winlator_src
 
-echo "Verificando ejecutable de Gradle..."
-if [ -f "gradlew" ]; then
-    chmod +x gradlew
-else
-    echo "Generando ejecutable Gradle..."
-    gradle wrapper
-    chmod +x gradlew
-fi
+echo "Asignando permisos a gradlew..."
+chmod +x gradlew
 
-echo "Fuentes de Winlator listas para compilar."
+echo "Fuentes de Winlator preparadas con éxito."
